@@ -379,8 +379,8 @@ static NSArray *_PopupControllerWithId (int pid) {
         }
     }
     
-    if ([popupViewController isKindOfClass:[MJPopupViewController class]]) {
-        MJPopupViewController *mjPopupViewController = (MJPopupViewController *)popupViewController;
+    if ([popupViewController conformsToProtocol:@protocol(MJPopupViewControllerDelegate)]) {
+        id<MJPopupViewControllerDelegate> mjPopupViewController = (id<MJPopupViewControllerDelegate>)popupViewController;
         if (mjPopupViewController.providesPopupEndRect) {
             popupEndRect = mjPopupViewController.popupEndRect;
         }
@@ -444,8 +444,8 @@ static NSArray *_PopupControllerWithId (int pid) {
             break;
     }
     
-    if ([popupViewController isKindOfClass:[MJPopupViewController class]]) {
-        MJPopupViewController *mjPopupViewController = (MJPopupViewController *)popupViewController;
+    if ([popupViewController conformsToProtocol:@protocol(MJPopupViewControllerDelegate)]) {
+        id<MJPopupViewControllerDelegate> mjPopupViewController = (id<MJPopupViewControllerDelegate>)popupViewController;
         if (mjPopupViewController.providesPopupStartRect) {
             popupEndRect = mjPopupViewController.popupStartRect;
         }
