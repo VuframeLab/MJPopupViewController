@@ -162,8 +162,12 @@ static NSArray *_PopupControllerWithId (int pid) {
             [self slideViewOut:popupViewController sourceView:sourceView overlayView:overlayView withAnimationType:animationType];
             break;
             
-        default:
+        case MJPopupViewAnimationFade:
             [self fadeViewOut:popupViewController sourceView:sourceView overlayView:overlayView];
+            break;
+            
+        default:
+            [self popViewOut:popupViewController sourceView:sourceView overlayView:overlayView];
             break;
     }
 }
@@ -289,8 +293,10 @@ static NSArray *_PopupControllerWithId (int pid) {
         case MJPopupViewAnimationSlideRightRight:
             [self slideViewIn:popupViewController sourceView:sourceView overlayView:overlayView withAnimationType:animationType];
             break;
-        default:
+        case MJPopupViewAnimationFade:
             [self fadeViewIn:popupViewController sourceView:sourceView overlayView:overlayView];
+        default:
+            [self popViewIn:popupViewController sourceView:sourceView overlayView:overlayView];
             break;
     }    
 }
@@ -458,6 +464,65 @@ static NSArray *_PopupControllerWithId (int pid) {
             _RemovePopupControllerWithId(popupId);
         }
     }];
+}
+
+- (void)popViewIn:(UIViewController*)popupViewController sourceView:(UIView*)sourceView overlayView:(UIView*)overlayView
+{
+    __weak UIViewController *backupedPopupViewController = popupViewController;
+    int popupId = popupViewController.view.tag;
+    NSArray *popupInfo = _PopupControllerWithId(popupId);
+    UIView *popupView = (UIView *)popupInfo[3];
+    UIView *backgroundView = [popupInfo count] > 5 ? (UIView *)popupInfo[5] : nil;
+    
+    // Generating Start and Stop Positions
+    CGSize sourceSize = sourceView.bounds.size;
+    CGSize popupSize = popupView.bounds.size;
+    
+    CGRect popupEndRect = CGRectMake((sourceSize.width - popupSize.width) / 2,
+                                     (sourceSize.height - popupSize.height) / 2,
+                                     popupSize.width,
+                                     popupSize.height);
+    
+    if (_phoneCompatibilityMode) {
+        if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone) {
+            if (popupEndRect.origin.y < 0) {
+                popupEndRect.size.height += popupEndRect.origin.y;
+                popupEndRect.origin.y = 0;
+            }
+            if (![[UIApplication sharedApplication] isStatusBarHidden]) {
+                popupEndRect.origin.y += 20;
+            }
+        }
+    }
+    
+    if ([popupViewController conformsToProtocol:@protocol(MJPopupViewControllerDelegate)]) {
+        id<MJPopupViewControllerDelegate> mjPopupViewController = (id<MJPopupViewControllerDelegate>)popupViewController;
+        if (mjPopupViewController.providesPopupEndRect) {
+            popupEndRect = mjPopupViewController.popupEndRect;
+        }
+    }
+    
+    // Set starting properties
+    popupView.alpha = 1.0f;
+    backgroundView.alpha = 1.0f;
+    popupView.frame = popupEndRect;
+    [backupedPopupViewController viewDidAppear:YES];
+}
+
+- (void)popViewOut:(UIViewController*)popupViewController sourceView:(UIView*)sourceView overlayView:(UIView*)overlayView
+{
+    __weak UIViewController* weakPopupViewController = popupViewController;
+    __weak int popupId = popupViewController.view.tag;
+    NSArray *popupInfo = _PopupControllerWithId(popupId);
+    UIView *popupView = (UIView *)popupInfo[3];
+    UIView *backgroundView = [popupInfo count] > 5 ? (UIView *)popupInfo[5] : nil;
+    
+    [popupView removeFromSuperview];
+    [overlayView removeFromSuperview];
+    [weakPopupViewController didDismissPopupViewController:weakPopupViewController];
+    [weakPopupViewController didDismissPopup:popupView];
+    [weakPopupViewController viewDidDisappear:YES];
+    _RemovePopupControllerWithId(popupId);
 }
 
 #pragma mark --- Fade
