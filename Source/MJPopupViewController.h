@@ -24,7 +24,7 @@
  */
 @interface MJPopupViewController : UIViewController<MJPopupViewControllerDelegate>
 
-@property (nonatomic,readwrite,strong) UIViewController *popupParent;
+@property (nonatomic,readwrite,weak) UIViewController *popupParent;
 
 - (void)dismissPopupViewController;
 
