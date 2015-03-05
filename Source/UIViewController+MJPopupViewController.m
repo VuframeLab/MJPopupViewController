@@ -458,8 +458,8 @@ static NSArray *_PopupControllerWithId (int pid) {
         if (finished) {
             [popupView removeFromSuperview];
             [overlayView removeFromSuperview];
-            [weakPopupViewController willDismissPopupViewController:weakPopupViewController];
-            [weakPopupViewController willDismissPopup:popupView];
+            [self willDismissPopupViewController:weakPopupViewController];
+            [self willDismissPopup:popupView];
             [weakPopupViewController viewDidDisappear:YES];
             _RemovePopupControllerWithId(popupId);
         }
@@ -519,8 +519,8 @@ static NSArray *_PopupControllerWithId (int pid) {
     
     [popupView removeFromSuperview];
     [overlayView removeFromSuperview];
-    [weakPopupViewController willDismissPopupViewController:weakPopupViewController];
-    [weakPopupViewController willDismissPopup:popupView];
+    [self willDismissPopupViewController:weakPopupViewController];
+    [self willDismissPopup:popupView];
     [weakPopupViewController viewDidDisappear:YES];
     _RemovePopupControllerWithId(popupId);
 }
@@ -561,8 +561,8 @@ static NSArray *_PopupControllerWithId (int pid) {
 
 - (void)fadeViewOut:(UIViewController*)popupViewController sourceView:(UIView*)sourceView overlayView:(UIView*)overlayView
 {
-    __weak UIViewController* weakPopupViewController = popupViewController;
-    __weak int popupId = popupViewController.view.tag;
+    __block UIViewController* weakPopupViewController = popupViewController;
+    __block int popupId = popupViewController.view.tag;
     NSArray *popupInfo = _PopupControllerWithId(popupId);
     UIView *popupView = (UIView *)popupInfo[3];
     UIView *backgroundView = [popupInfo count] > 5 ? (UIView *)popupInfo[5] : nil;
@@ -574,31 +574,28 @@ static NSArray *_PopupControllerWithId (int pid) {
         popupView.alpha = 0.0f;
     } completion:^(BOOL finished) {
         if (finished) {
-            [popupView removeFromSuperview];
-            [overlayView removeFromSuperview];
-            [weakPopupViewController willDismissPopupViewController:weakPopupViewController];
-            [weakPopupViewController willDismissPopup:popupView];
+            [self willDismissPopupViewController:weakPopupViewController];
+            [self willDismissPopup:popupView];
             [weakPopupViewController viewDidDisappear:YES];
             _RemovePopupControllerWithId(popupId);
+            [popupView removeFromSuperview];
+            [overlayView removeFromSuperview];
         }
     }];
 }
 
 - (void)willDismissPopup:(UIView *)popupView
 {
-    if ([[self class] conformsToProtocol:@protocol(MJPopupViewDelegate)]) {
-        if ([self respondsToSelector:@selector(didDismissPopup:)]) {
-            [self performSelector:@selector(didDismissPopup:) withObject:popupView];
-        }
+    if ([self respondsToSelector:@selector(didDismissPopup:)]) {
+        [self performSelector:@selector(didDismissPopup:) withObject:popupView];
     }
 }
 
 - (void)willDismissPopupViewController:(UIViewController *)popupViewController
 {
-    if ([[self class] conformsToProtocol:@protocol(MJPopupViewDelegate)]) {
-        if ([self respondsToSelector:@selector(didDismissPopupViewController:)]) {
-            [self performSelector:@selector(didDismissPopupViewController:) withObject:popupViewController];
-        }
+    if ([self respondsToSelector:@selector(didDismissPopupViewController:)])
+    {
+        [self performSelector:@selector(didDismissPopupViewController:) withObject:popupViewController];
     }
 }
 
