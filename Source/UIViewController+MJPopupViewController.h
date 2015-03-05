@@ -9,6 +9,7 @@
 #import <UIKit/UIKit.h>
 
 typedef enum {
+    MJPopupViewAnimationNone,
     MJPopupViewAnimationSlideBottomTop = 1,
     MJPopupViewAnimationSlideRightLeft,
     MJPopupViewAnimationSlideLeftRight,
