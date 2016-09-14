@@ -20,7 +20,7 @@ typedef enum {
 } MJPopupViewAnimation;
 
 typedef enum {
-    MJPopupViewContentInteractionNone = 1, // no tap interaction, dismiss manually or from outside
+    MJPopupViewContentInteractionNone = 1, // no tap interaction, does not block touches, dismiss manually or from outside
     MJPopupViewContentInteractionDismissEverywhere, // tapping the background or the viewcontroller will dismiss the popup
     MJPopupViewContentInteractionDismissBackgroundOnly, // only tapping the background will dismiss the popup
 } MJPopupViewContentInteraction;

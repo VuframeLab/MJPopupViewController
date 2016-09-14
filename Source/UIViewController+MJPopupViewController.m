@@ -256,6 +256,14 @@ static NSArray *_PopupControllerWithId (int pid) {
         [overlayView addSubview:dismissButton];
         dismissButton.tag = popupId;
     }
+    else {
+        popupView.userInteractionEnabled = NO;
+        popupView.multipleTouchEnabled = NO;
+        backgroundView.userInteractionEnabled = NO;
+        backgroundView.multipleTouchEnabled = NO;
+        overlayView.userInteractionEnabled = NO;
+        overlayView.multipleTouchEnabled = NO;
+    }
     
     popupView.alpha = 0.0f;
     
