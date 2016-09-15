@@ -20,9 +20,10 @@ typedef enum {
 } MJPopupViewAnimation;
 
 typedef enum {
-    MJPopupViewContentInteractionNone = 1, // no tap interaction, does not block touches, dismiss manually or from outside
-    MJPopupViewContentInteractionDismissEverywhere, // tapping the background or the viewcontroller will dismiss the popup
-    MJPopupViewContentInteractionDismissBackgroundOnly, // only tapping the background will dismiss the popup
+    MJPopupViewContentInteractionDisabled = 0, // no tap interaction, does not block touches, dismiss manually or from outside
+    MJPopupViewContentInteractionNone = 1, // no dismiss but buttons respond properly, does block touches
+    MJPopupViewContentInteractionDismissEverywhere, // tapping the background or the viewcontroller will dismiss the popup, does block touches
+    MJPopupViewContentInteractionDismissBackgroundOnly, // only tapping the background will dismiss the popup, does block touches
 } MJPopupViewContentInteraction;
 
 typedef void(^MJPopupViewStyle)(UIView *view);
