@@ -14,7 +14,7 @@
 #ifdef COCOAPODS_POD_AVAILABLE_CocoaLumberjack
     #import "DDLog.h"
     static const int ddLogLevel = LOG_LEVEL_WARN;
-#else 
+#else
     #ifdef COCOAPODS_POD_AVAILABLE_StaticLumberjack
         #import "DDLog.h"
         static const int ddLogLevel = LOG_LEVEL_WARN;
@@ -128,11 +128,11 @@ static NSArray *_PopupControllerWithId (int pid) {
 #endif
         return;
     }
-    
+
     if ([popupViewController respondsToSelector:@selector(setPopupParent:)]) {
         [(MJPopupViewController *)popupViewController setPopupParent:self];
     }
-    
+
     [self presentPopupView:popupViewController animationType:animationType contentInteraction:contentInteraction];
 }
 
@@ -149,9 +149,9 @@ static NSArray *_PopupControllerWithId (int pid) {
     UIView *overlayView = (UIView *)popupInfo[2];
     UIView *popupView = (UIView *)popupInfo[3];
     //DDLogVerbose(@"dismissPopupViewController %d %@", popupId, popupInfo);
-    
+
     [popupViewController viewWillDisappear:YES];
-    
+
     switch (animationType) {
         case MJPopupViewAnimationSlideBottomTop:
         case MJPopupViewAnimationSlideBottomBottom:
@@ -161,11 +161,11 @@ static NSArray *_PopupControllerWithId (int pid) {
         case MJPopupViewAnimationSlideRightLeft:
             [self slideViewOut:popupViewController sourceView:sourceView overlayView:overlayView withAnimationType:animationType];
             break;
-            
+
         case MJPopupViewAnimationFade:
             [self fadeViewOut:popupViewController sourceView:sourceView overlayView:overlayView];
             break;
-            
+
         default:
             [self popViewOut:popupViewController sourceView:sourceView overlayView:overlayView];
             break;
@@ -185,25 +185,25 @@ static NSArray *_PopupControllerWithId (int pid) {
 #pragma mark View Handling
 
 - (void)presentPopupView:(UIViewController*)popupViewController animationType:(MJPopupViewAnimation)animationType contentInteraction:(MJPopupViewContentInteraction)contentInteraction
-{ 
+{
     UIView *sourceView = [self topView];
     UIView *popupView = popupViewController.view;
-    
+
     // check if source view controller is not in destination
     if ([sourceView.subviews containsObject:popupView]) return;
-    
+
     if (_popupStyle != nil) {
         _popupStyle(popupView);
     }
-    
+
     [popupViewController viewWillAppear:YES];
-    
+
     // Add semi overlay
     UIView *overlayView = [[UIView alloc] initWithFrame:sourceView.bounds];
     overlayView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     overlayView.backgroundColor = [UIColor clearColor];
     overlayView.userInteractionEnabled = _useOverlayView;
-    
+
     // BackgroundView
     UIView *backgroundView = nil;
     if (_useBackgroundView) {
@@ -244,10 +244,10 @@ static NSArray *_PopupControllerWithId (int pid) {
     }
     popupView.tag = popupId;
     //DDLogVerbose(@"presentPopupView %d %@", popupId, popupInfo);
-    
+
     // Make the Background Clickable
     UIButton * dismissButton = nil;
-    if (contentInteraction != MJPopupViewContentInteractionNone) {
+    if (contentInteraction != MJPopupViewContentInteractionDisabled) {
         dismissButton = [UIButton buttonWithType:UIButtonTypeCustom];
         dismissButton.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
         dismissButton.backgroundColor = [UIColor clearColor];
@@ -264,9 +264,9 @@ static NSArray *_PopupControllerWithId (int pid) {
         overlayView.userInteractionEnabled = NO;
         overlayView.multipleTouchEnabled = NO;
     }
-    
+
     popupView.alpha = 0.0f;
-    
+
     if (_useOverlayView)
     {
         // common setting
@@ -279,7 +279,7 @@ static NSArray *_PopupControllerWithId (int pid) {
         [sourceView addSubview:popupView];
     }
 
-    
+
     // Make the Popup Clickable
     UIButton * dismissButton2 = nil;
     if (contentInteraction == MJPopupViewContentInteractionDismissEverywhere) {
@@ -306,12 +306,12 @@ static NSArray *_PopupControllerWithId (int pid) {
         default:
             [self popViewIn:popupViewController sourceView:sourceView overlayView:overlayView];
             break;
-    }    
+    }
 }
 
 -(UIView*)topView {
     UIViewController *recentView = self;
-    
+
     while (recentView.parentViewController != nil) {
         recentView = recentView.parentViewController;
     }
@@ -331,7 +331,7 @@ static NSArray *_PopupControllerWithId (int pid) {
     NSArray *popupInfo = _PopupControllerWithId(popupId);
     UIView *popupView = (UIView *)popupInfo[3];
     UIView *backgroundView = [popupInfo count] > 5 ? (UIView *)popupInfo[5] : nil;
-    
+
     // Generating Start and Stop Positions
     CGSize sourceSize = sourceView.bounds.size;
     CGSize popupSize = popupView.bounds.size;
@@ -339,17 +339,17 @@ static NSArray *_PopupControllerWithId (int pid) {
     switch (animationType) {
         case MJPopupViewAnimationSlideBottomTop:
         case MJPopupViewAnimationSlideBottomBottom:
-            popupStartRect = CGRectMake((sourceSize.width - popupSize.width) / 2, 
-                                        sourceSize.height, 
-                                        popupSize.width, 
+            popupStartRect = CGRectMake((sourceSize.width - popupSize.width) / 2,
+                                        sourceSize.height,
+                                        popupSize.width,
                                         popupSize.height);
 
             break;
         case MJPopupViewAnimationSlideLeftLeft:
         case MJPopupViewAnimationSlideLeftRight:
-            popupStartRect = CGRectMake(-sourceSize.width, 
+            popupStartRect = CGRectMake(-sourceSize.width,
                                         (sourceSize.height - popupSize.height) / 2,
-                                        popupSize.width, 
+                                        popupSize.width,
                                         popupSize.height);
             break;
         case MJPopupViewAnimationSlideRightRight:
@@ -359,19 +359,19 @@ static NSArray *_PopupControllerWithId (int pid) {
                                         popupSize.width,
                                         popupSize.height);
             break;
-            
+
         default:
-            popupStartRect = CGRectMake(sourceSize.width, 
+            popupStartRect = CGRectMake(sourceSize.width,
                                         (sourceSize.height - popupSize.height) / 2,
-                                        popupSize.width, 
+                                        popupSize.width,
                                         popupSize.height);
             break;
-    }        
+    }
     CGRect popupEndRect = CGRectMake((sourceSize.width - popupSize.width) / 2,
                                      (sourceSize.height - popupSize.height) / 2,
-                                     popupSize.width, 
+                                     popupSize.width,
                                      popupSize.height);
-    
+
     if (_phoneCompatibilityMode) {
         if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone) {
             if (popupEndRect.origin.y < 0) {
@@ -383,7 +383,7 @@ static NSArray *_PopupControllerWithId (int pid) {
             }
         }
     }
-    
+
     if ([popupViewController conformsToProtocol:@protocol(MJPopupViewControllerDelegate)]) {
         id<MJPopupViewControllerDelegate> mjPopupViewController = (id<MJPopupViewControllerDelegate>)popupViewController;
         if (mjPopupViewController.providesPopupEndRect) {
@@ -393,7 +393,7 @@ static NSArray *_PopupControllerWithId (int pid) {
             popupStartRect = mjPopupViewController.popupStartRect;
         }
     }
-    
+
     // Set starting properties
     popupView.frame = popupStartRect;
     popupView.alpha = 1.0f;
@@ -417,46 +417,46 @@ static NSArray *_PopupControllerWithId (int pid) {
     UIView *popupView = (UIView *)popupInfo[3];
     UIView *backgroundView = [popupInfo count] > 5 ? (UIView *)popupInfo[5] : nil;
     //DDLogVerbose(@"slideViewOut %d %@", self.view.tag, popupInfo);
-    
+
     // Generating Start and Stop Positions
     CGSize sourceSize = sourceView.bounds.size;
     CGSize popupSize = popupView.bounds.size;
     CGRect popupEndRect;
     switch (animationType) {
         case MJPopupViewAnimationSlideBottomTop:
-            popupEndRect = CGRectMake((sourceSize.width - popupSize.width) / 2, 
-                                      -popupSize.height, 
-                                      popupSize.width, 
+            popupEndRect = CGRectMake((sourceSize.width - popupSize.width) / 2,
+                                      -popupSize.height,
+                                      popupSize.width,
                                       popupSize.height);
             break;
         case MJPopupViewAnimationSlideBottomBottom:
-            popupEndRect = CGRectMake((sourceSize.width - popupSize.width) / 2, 
-                                      sourceSize.height, 
-                                      popupSize.width, 
+            popupEndRect = CGRectMake((sourceSize.width - popupSize.width) / 2,
+                                      sourceSize.height,
+                                      popupSize.width,
                                       popupSize.height);
             break;
         case MJPopupViewAnimationSlideRightRight:
         case MJPopupViewAnimationSlideLeftRight:
-            popupEndRect = CGRectMake(sourceSize.width, 
-                                      popupView.frame.origin.y, 
-                                      popupSize.width, 
+            popupEndRect = CGRectMake(sourceSize.width,
+                                      popupView.frame.origin.y,
+                                      popupSize.width,
                                       popupSize.height);
             break;
         default:
-            popupEndRect = CGRectMake(-popupSize.width, 
-                                      popupView.frame.origin.y, 
-                                      popupSize.width, 
+            popupEndRect = CGRectMake(-popupSize.width,
+                                      popupView.frame.origin.y,
+                                      popupSize.width,
                                       popupSize.height);
             break;
     }
-    
+
     if ([popupViewController conformsToProtocol:@protocol(MJPopupViewControllerDelegate)]) {
         id<MJPopupViewControllerDelegate> mjPopupViewController = (id<MJPopupViewControllerDelegate>)popupViewController;
         if (mjPopupViewController.providesPopupStartRect) {
             popupEndRect = mjPopupViewController.popupStartRect;
         }
     }
-    
+
     [UIView animateWithDuration:kPopupModalAnimationDuration delay:0.0f options:UIViewAnimationOptionCurveEaseIn animations:^{
         popupView.frame = popupEndRect;
         if (backgroundView) {
@@ -481,16 +481,16 @@ static NSArray *_PopupControllerWithId (int pid) {
     NSArray *popupInfo = _PopupControllerWithId(popupId);
     UIView *popupView = (UIView *)popupInfo[3];
     UIView *backgroundView = [popupInfo count] > 5 ? (UIView *)popupInfo[5] : nil;
-    
+
     // Generating Start and Stop Positions
     CGSize sourceSize = sourceView.bounds.size;
     CGSize popupSize = popupView.bounds.size;
-    
+
     CGRect popupEndRect = CGRectMake((sourceSize.width - popupSize.width) / 2,
                                      (sourceSize.height - popupSize.height) / 2,
                                      popupSize.width,
                                      popupSize.height);
-    
+
     if (_phoneCompatibilityMode) {
         if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone) {
             if (popupEndRect.origin.y < 0) {
@@ -502,14 +502,14 @@ static NSArray *_PopupControllerWithId (int pid) {
             }
         }
     }
-    
+
     if ([popupViewController conformsToProtocol:@protocol(MJPopupViewControllerDelegate)]) {
         id<MJPopupViewControllerDelegate> mjPopupViewController = (id<MJPopupViewControllerDelegate>)popupViewController;
         if (mjPopupViewController.providesPopupEndRect) {
             popupEndRect = mjPopupViewController.popupEndRect;
         }
     }
-    
+
     // Set starting properties
     popupView.alpha = 1.0f;
     backgroundView.alpha = 1.0f;
@@ -524,7 +524,7 @@ static NSArray *_PopupControllerWithId (int pid) {
     NSArray *popupInfo = _PopupControllerWithId(popupId);
     UIView *popupView = (UIView *)popupInfo[3];
     UIView *backgroundView = [popupInfo count] > 5 ? (UIView *)popupInfo[5] : nil;
-    
+
     [popupView removeFromSuperview];
     [overlayView removeFromSuperview];
     [self willDismissPopupViewController:weakPopupViewController];
@@ -542,19 +542,19 @@ static NSArray *_PopupControllerWithId (int pid) {
     NSArray *popupInfo = _PopupControllerWithId(popupId);
     UIView *popupView = (UIView *)popupInfo[3];
     UIView *backgroundView = [popupInfo count] > 5 ? (UIView *)popupInfo[5] : nil;
-    
+
     // Generating Start and Stop Positions
     CGSize sourceSize = sourceView.bounds.size;
     CGSize popupSize = popupView.bounds.size;
-    CGRect popupEndRect = CGRectMake((sourceSize.width - popupSize.width) / 2, 
+    CGRect popupEndRect = CGRectMake((sourceSize.width - popupSize.width) / 2,
                                      (sourceSize.height - popupSize.height) / 2,
-                                     popupSize.width, 
+                                     popupSize.width,
                                      popupSize.height);
-    
+
     // Set starting properties
     popupView.frame = popupEndRect;
     popupView.alpha = 0.0f;
-    
+
     [UIView animateWithDuration:kPopupModalAnimationDuration animations:^{
         if (backgroundView) {
             backgroundView.alpha = 0.5f;
@@ -574,7 +574,7 @@ static NSArray *_PopupControllerWithId (int pid) {
     NSArray *popupInfo = _PopupControllerWithId(popupId);
     UIView *popupView = (UIView *)popupInfo[3];
     UIView *backgroundView = [popupInfo count] > 5 ? (UIView *)popupInfo[5] : nil;
-    
+
     [UIView animateWithDuration:kPopupModalAnimationDuration animations:^{
         if (backgroundView) {
             backgroundView.alpha = 0.0f;
