@@ -150,7 +150,7 @@ static NSArray *_PopupControllerWithId (int pid) {
     UIView *popupView = (UIView *)popupInfo[3];
     //DDLogVerbose(@"dismissPopupViewController %d %@", popupId, popupInfo);
 
-    [popupViewController viewWillDisappear:YES];
+    [popupViewController beginAppearanceTransition:NO animated:YES];
 
     switch (animationType) {
         case MJPopupViewAnimationSlideBottomTop:
@@ -196,7 +196,7 @@ static NSArray *_PopupControllerWithId (int pid) {
         _popupStyle(popupView);
     }
 
-    [popupViewController viewWillAppear:YES];
+    [popupViewController beginAppearanceTransition:YES animated:YES];
 
     // Add semi overlay
     UIView *overlayView = [[UIView alloc] initWithFrame:sourceView.bounds];
@@ -404,7 +404,7 @@ static NSArray *_PopupControllerWithId (int pid) {
         popupView.frame = popupEndRect;
     } completion:^(BOOL finished) {
         if (finished) {
-            [backupedPopupViewController viewDidAppear:YES];
+            [backupedPopupViewController endAppearanceTransition];
         }
     }];
 }
@@ -468,7 +468,7 @@ static NSArray *_PopupControllerWithId (int pid) {
             [overlayView removeFromSuperview];
             [self willDismissPopupViewController:weakPopupViewController];
             [self willDismissPopup:popupView];
-            [weakPopupViewController viewDidDisappear:YES];
+            [weakPopupViewController endAppearanceTransition];
             _RemovePopupControllerWithId(popupId);
         }
     }];
@@ -514,7 +514,7 @@ static NSArray *_PopupControllerWithId (int pid) {
     popupView.alpha = 1.0f;
     backgroundView.alpha = 1.0f;
     popupView.frame = popupEndRect;
-    [backupedPopupViewController viewDidAppear:YES];
+    [backupedPopupViewController endAppearanceTransition];
 }
 
 - (void)popViewOut:(UIViewController*)popupViewController sourceView:(UIView*)sourceView overlayView:(UIView*)overlayView
@@ -529,7 +529,7 @@ static NSArray *_PopupControllerWithId (int pid) {
     [overlayView removeFromSuperview];
     [self willDismissPopupViewController:weakPopupViewController];
     [self willDismissPopup:popupView];
-    [weakPopupViewController viewDidDisappear:YES];
+    [weakPopupViewController endAppearanceTransition];
     _RemovePopupControllerWithId(popupId);
 }
 
@@ -562,7 +562,7 @@ static NSArray *_PopupControllerWithId (int pid) {
         popupView.alpha = 1.0f;
     } completion:^(BOOL finished) {
         if (finished) {
-            [backupedPopupViewController viewDidAppear:YES];
+            [backupedPopupViewController endAppearanceTransition];
         }
     }];
 }
@@ -584,7 +584,7 @@ static NSArray *_PopupControllerWithId (int pid) {
         if (finished) {
             [self willDismissPopupViewController:weakPopupViewController];
             [self willDismissPopup:popupView];
-            [weakPopupViewController viewDidDisappear:YES];
+            [weakPopupViewController endAppearanceTransition];
             _RemovePopupControllerWithId(popupId);
             [popupView removeFromSuperview];
             [overlayView removeFromSuperview];
