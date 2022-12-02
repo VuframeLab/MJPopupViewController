@@ -1,0 +1,23 @@
+GIT
+  remote: git@github.vuframe.com:Vuframe/vfawesome-gem.git
+  revision: fab9f4ca92ac2f9fbf7e740e60028047b40f324f
+  specs:
+    vfawesome (1.1.4)
+      colored
+      thor
+      wannabe_bool
+
+GEM
+  specs:
+    colored (1.2)
+    thor (1.2.1)
+    wannabe_bool (0.7.1)
+
+PLATFORMS
+  -darwin-21
+
+DEPENDENCIES
+  vfawesome!
+
+BUNDLED WITH
+   2.3.22
